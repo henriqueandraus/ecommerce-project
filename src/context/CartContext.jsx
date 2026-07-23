@@ -6,11 +6,13 @@ const CartContext = createContext();
 
 export function CartProvider({ children }) {
   const [cartId, setCartId] = useState(null);
+  const [user, setUser] = useState(null);
 
   const refreshCart = useCallback(async () => {
-    const user = await getCurrentUser();
-    if (user) {
-      const cart = await getOrCreateCart(user.id);
+    const currentUser = await getCurrentUser();
+    setUser(currentUser);
+    if (currentUser) {
+      const cart = await getOrCreateCart(currentUser.id);
       setCartId(cart.id);
     } else {
       setCartId(null);
@@ -22,7 +24,7 @@ export function CartProvider({ children }) {
   }, [refreshCart]);
 
   return (
-    <CartContext.Provider value={{ cartId, refreshCart }}>
+    <CartContext.Provider value={{ cartId, user, refreshCart }}>
       {children}
     </CartContext.Provider>
   );
