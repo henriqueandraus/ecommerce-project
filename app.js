@@ -3,19 +3,35 @@ const pool = require('./db.js')
 const bcrypt = require('bcrypt')
 const session = require('express-session')
 const passport = require('./passportConfig')
+const cors = require('cors')
 const swaggerUi = require('swagger-ui-express');
 const YAML = require('yamljs');
 const swaggerDocument = YAML.load('./openapi.yaml');
 require('dotenv').config();
+const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
 
-function processPayment(paymentDetails) {
-  if (!paymentDetails || !paymentDetails.cardNumber) {
+async function processPayment(paymentIntentId) {
+  try {
+    const paymentIntent = await stripe.paymentIntents.retrieve(paymentIntentId);
+    return paymentIntent.status === 'succeeded';
+  } catch (error) {
     return false;
   }
-  return true;
+}
+
+function ensureAuthenticated(req, res, next) {
+  if (req.isAuthenticated()) {
+    return next();
+  }
+  res.status(401).json({ message: 'Unauthorized. Please log in.' });
 }
 
 const app = express()
+
+app.use(cors({
+  origin: 'http://localhost:5173',
+  credentials: true
+}));
 
 app.use(express.json());
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
@@ -65,7 +81,15 @@ app.post('/register', (req, res) => {
           if (error) {
             return res.status(500).send(error.message);
           }
-          res.status(201).json(results.rows[0]);
+
+          const newUser = results.rows[0];
+
+          req.login(newUser, (err) => {
+            if (err) {
+              return res.status(500).send(err.message);
+            }
+            res.status(201).json(newUser);
+          });
         }
       );
     });
@@ -74,6 +98,49 @@ app.post('/register', (req, res) => {
 
 app.post('/login', passport.authenticate('local'), (req, res) => {
   res.status(200).json({ message: 'Login successful', user: req.user });
+});
+
+app.get('/auth/google',
+  passport.authenticate('google', { scope: ['profile', 'email'] })
+);
+
+app.get('/auth/google/callback',
+  passport.authenticate('google', { failureRedirect: '/login' }),
+  (req, res) => {
+    res.redirect('http://localhost:5173/');
+  }
+);
+
+app.get('/me', (req, res) => {
+  if (req.isAuthenticated()) {
+    res.status(200).json(req.user);
+  } else {
+    res.status(401).json({ message: 'Not authenticated' });
+  }
+});
+
+app.post('/logout', (req, res) => {
+  req.logout((err) => {
+    if (err) {
+      return res.status(500).send(err.message);
+    }
+    res.status(200).json({ message: 'Logout successful' });
+  });
+});
+
+app.post('/create-payment-intent', ensureAuthenticated, async (req, res) => {
+  const { amount } = req.body;
+
+  try {
+    const paymentIntent = await stripe.paymentIntents.create({
+      amount: Math.round(amount * 100),
+      currency: 'usd',
+    });
+
+    res.status(200).json({ clientSecret: paymentIntent.client_secret });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
 });
 
 app.get('/products', (req, res) => {
@@ -214,7 +281,7 @@ app.delete('/users/:id', (req, res) => {
   });
 })
 
-app.post('/cart', (req, res) => {
+app.post('/cart', ensureAuthenticated, (req, res) => {
   const { user_id } = req.body;
 
   pool.query(
@@ -235,7 +302,7 @@ app.post('/cart', (req, res) => {
   );
 })
 
-app.get('/cart/:cartId', (req, res) => {
+app.get('/cart/:cartId', ensureAuthenticated, (req, res) => {
   const { cartId } = req.params;
 
   pool.query(
@@ -253,7 +320,7 @@ app.get('/cart/:cartId', (req, res) => {
   );
 })
 
-app.post('/cart/:cartId', (req, res) => {
+app.post('/cart/:cartId', ensureAuthenticated, (req, res) => {
   const { cartId } = req.params;
   const { product_id, quantity } = req.body;
 
@@ -272,7 +339,7 @@ app.post('/cart/:cartId', (req, res) => {
   );
 })
 
-app.delete('/cart/:cartId/items/:itemId', (req, res) => {
+app.delete('/cart/:cartId/items/:itemId', ensureAuthenticated, (req, res) => {
   const { cartId, itemId } = req.params;
 
   pool.query(
@@ -290,9 +357,23 @@ app.delete('/cart/:cartId/items/:itemId', (req, res) => {
   );
 })
 
-app.post('/cart/:cartId/checkout', (req, res) => {
+app.get('/cart/user/:userId', ensureAuthenticated, (req, res) => {
+  const { userId } = req.params;
+
+  pool.query('SELECT * FROM carts WHERE user_id = $1', [userId], (error, results) => {
+    if (error) {
+      return res.status(500).send(error.message);
+    }
+    if (results.rows.length === 0) {
+      return res.status(404).send('Cart not found for this user');
+    }
+    res.status(200).json(results.rows[0]);
+  });
+});
+
+app.post('/cart/:cartId/checkout', ensureAuthenticated, (req, res) => {
   const { cartId } = req.params;
-  const { user_id, payment_details } = req.body;
+  const { user_id, payment_intent_id } = req.body;
 
   pool.query(
     `SELECT cart_items.product_id, cart_items.quantity, products.price
@@ -300,7 +381,7 @@ app.post('/cart/:cartId/checkout', (req, res) => {
      JOIN products ON cart_items.product_id = products.id
      WHERE cart_items.cart_id = $1`,
     [cartId],
-    (error, cartResults) => {
+    async (error, cartResults) => {
       if (error) {
         return res.status(500).send(error.message);
       }
@@ -308,7 +389,7 @@ app.post('/cart/:cartId/checkout', (req, res) => {
         return res.status(400).send('Cart is empty or does not exist');
       }
 
-      const paymentSuccess = processPayment(payment_details);
+      const paymentSuccess = await processPayment(payment_intent_id);
 
       if (!paymentSuccess) {
         return res.status(402).send('Payment failed');
@@ -354,7 +435,7 @@ app.post('/cart/:cartId/checkout', (req, res) => {
   );
 })
 
-app.get('/orders', (req, res) => {
+app.get('/orders', ensureAuthenticated, (req, res) => {
   const { user_id } = req.query;
 
   pool.query('SELECT * FROM orders WHERE user_id = $1', [user_id], (error, results) => {
@@ -365,7 +446,7 @@ app.get('/orders', (req, res) => {
   });
 })
 
-app.get('/orders/:orderId', (req, res) => {
+app.get('/orders/:orderId', ensureAuthenticated, (req, res) => {
   const { orderId } = req.params;
 
   pool.query(
