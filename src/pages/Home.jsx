@@ -30,8 +30,7 @@ function Home() {
           <span className="eyebrow hero-eyebrow">Small runs, no restock</span>
           <h1 className="hero-title">Cut for the curb.</h1>
           <p className="hero-lede">
-            Blacktop makes street-cut layers built for standing outside — court, corner,
-            or curb. Every drop is stocked once. When a size is gone off the rack, it's
+            Blacktop makes street-cut layers built for standing outside. Every drop is stocked once. When a size is gone off the rack, it's
             gone.
           </p>
           <div className="hero-actions">
@@ -49,8 +48,6 @@ function Home() {
           </div>
         </div>
       </section>
-
-      <div className="lane-divider" role="presentation" />
 
       <section className="featured">
         <div className="featured-head">

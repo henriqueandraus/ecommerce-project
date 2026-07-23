@@ -30,7 +30,7 @@
   content: "";
   width: 8px;
   height: 8px;
-  background: var(--accent);
+  background: var(--ink);
   border-radius: 50%;
 }
 
@@ -82,14 +82,10 @@
 
 .hero-stamp {
   width: clamp(160px, 20vw, 220px);
-  aspect-ratio: 1;
-  border: 3px dashed var(--accent);
-  border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
   padding: 18px;
-  transform: rotate(-9deg);
   text-align: center;
 }
 
@@ -100,7 +96,7 @@
   letter-spacing: 0.1em;
   text-transform: uppercase;
   line-height: 1.5;
-  color: var(--accent);
+  color: var(--ink);
 }
 
 @keyframes rise-in {
@@ -113,11 +109,11 @@
 @keyframes stamp-in {
   from {
     opacity: 0;
-    transform: scale(0.85) rotate(4deg);
+    transform: scale(0.85);
   }
   to {
     opacity: 1;
-    transform: scale(1) rotate(-9deg);
+    transform: scale(1);
   }
 }
 
@@ -133,25 +129,11 @@
   }
 }
 
-/* ---------- lane divider ---------- */
-
-.lane-divider {
-  height: 10px;
-  background: repeating-linear-gradient(
-    90deg,
-    var(--accent) 0px,
-    var(--accent) 36px,
-    transparent 36px,
-    transparent 64px
-  );
-  opacity: 0.85;
-}
-
 /* ---------- featured ---------- */
 
 .featured {
   padding: clamp(48px, 7vw, 80px) clamp(20px, 5vw, 56px);
-  border-bottom: 2px dashed var(--line);
+  border-bottom: 1px solid var(--line);
 }
 
 .featured-head {
@@ -171,46 +153,18 @@
 
 .ticket {
   position: relative;
-  background: var(--bg-raised);
-  border: 2px dashed var(--line);
-  border-radius: 3px;
-  padding: 22px 18px 18px;
+  padding: 0;
   text-decoration: none;
   color: inherit;
-  transform: rotate(var(--tilt, -1.2deg));
-  transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
   opacity: 0;
   animation: stamp-flat-in 0.5s ease forwards;
   animation-delay: var(--delay, 0s);
 }
 
-.ticket:nth-child(3n + 1) {
-  --tilt: -1.4deg;
-}
-.ticket:nth-child(3n + 2) {
-  --tilt: 1.1deg;
-}
-.ticket:nth-child(3n + 3) {
-  --tilt: -0.6deg;
-}
-
-.ticket::before {
-  content: "";
-  position: absolute;
-  left: 0;
-  right: 0;
-  top: -7px;
-  height: 14px;
-  background-image: radial-gradient(circle 7px, var(--bg) 7px, transparent 7.5px);
-  background-repeat: repeat-x;
-  background-size: 22px 14px;
-  background-position: 11px 0;
-}
-
 .ticket:hover,
 .ticket:focus-visible {
-  transform: rotate(0deg) translateY(-6px);
-  border-color: var(--ink);
+  transform: translateY(-6px);
   box-shadow: 6px 6px 0 var(--shadow);
 }
 
@@ -218,7 +172,7 @@
   font-family: var(--mono);
   font-size: 12px;
   letter-spacing: 0.08em;
-  color: var(--accent-2);
+  color: var(--ink-muted);
   margin-bottom: 10px;
   display: block;
 }
@@ -266,7 +220,7 @@
 .ticket-foot {
   margin-top: 14px;
   padding-top: 12px;
-  border-top: 1px dashed var(--line);
+  border-top: 1px solid var(--line);
   display: flex;
   justify-content: space-between;
   align-items: baseline;
@@ -290,11 +244,11 @@
 @keyframes stamp-flat-in {
   from {
     opacity: 0;
-    transform: rotate(var(--tilt, -1.2deg)) translateY(10px) scale(0.96);
+    transform: translateY(10px) scale(0.96);
   }
   to {
     opacity: 1;
-    transform: rotate(var(--tilt, -1.2deg)) translateY(0) scale(1);
+    transform: translateY(0) scale(1);
   }
 }
 
@@ -303,12 +257,6 @@
 .ticket.skeleton {
   animation: none;
   opacity: 1;
-  transform: rotate(0deg);
-  border-style: dashed;
-}
-
-.ticket.skeleton::before {
-  display: none;
 }
 
 .skeleton-block {
@@ -336,7 +284,7 @@
 
 .rack-message {
   grid-column: 1 / -1;
-  border: 2px dashed var(--line);
+  border: 1px solid var(--line);
   border-radius: 3px;
   padding: 48px 24px;
   text-align: center;
