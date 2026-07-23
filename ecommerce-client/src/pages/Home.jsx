@@ -1,7 +1,10 @@
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { getProducts } from "../services/productService";
+import API_URL from "../services/api";
 import "./Home.css";
+
+const heroBanner = `${API_URL}/images/hero-banner.jpeg`;
 
 const FEATURED_COUNT = 6;
 
@@ -26,12 +29,13 @@ function Home() {
   return (
     <div className="home">
       <section className="hero">
-        <div className="hero-copy-col">
+        <img className="hero-media" src={heroBanner} alt="" loading="eager" />
+        <div className="hero-scrim" aria-hidden="true" />
+        <div className="hero-content">
           <span className="eyebrow hero-eyebrow">Small runs, no restock</span>
           <h1 className="hero-title">Cut for the curb.</h1>
           <p className="hero-lede">
-            Blacktop makes street-cut layers built for standing outside. Every drop is stocked once. When a size is gone off the rack, it's
-            gone.
+            Street-cut layers built for standing outside. Every drop lands once — when it's gone, it's gone.
           </p>
           <div className="hero-actions">
             <Link to="/products" className="btn">
@@ -42,11 +46,7 @@ function Home() {
             </Link>
           </div>
         </div>
-        <div className="hero-stamp-col">
-          <div className="hero-stamp">
-            <span>Since the first crack in the pavement</span>
-          </div>
-        </div>
+        <span className="hero-credit">Since the first crack in the pavement</span>
       </section>
 
       <section className="featured">

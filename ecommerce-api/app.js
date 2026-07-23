@@ -34,6 +34,7 @@ app.use(cors({
 }));
 
 app.use(express.json());
+app.use('/images', express.static(__dirname + '/public/images'));
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 
 app.use(session({

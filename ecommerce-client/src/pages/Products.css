@@ -1,0 +1,4 @@
+.products-title {
+  text-align: center;
+  padding: clamp(32px, 6vw, 56px) clamp(20px, 5vw, 56px);
+}

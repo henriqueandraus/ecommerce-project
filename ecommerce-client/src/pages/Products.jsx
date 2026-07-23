@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { getProducts } from "../services/productService";
 import ProductList from "../components/ProductList";
+import "./Products.css";
 
 function Products() {
   const [products, setProducts] = useState([]);
@@ -21,7 +22,7 @@ function Products() {
 
   return (
     <div>
-      <h1>Products</h1>
+      <h1 className="products-title">Products</h1>
       {error && <p style={{ color: "red" }}>{error}</p>}
       <ProductList products={products} />
     </div>
