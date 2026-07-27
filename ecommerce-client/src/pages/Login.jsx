@@ -68,13 +68,6 @@ function Login() {
           >
             Continue with Google
           </button>
-          <button
-            type="button"
-            className="login-social-btn"
-            onClick={() => (window.location.href = `${API_URL}/auth/facebook`)}
-          >
-            Continue with Facebook
-          </button>
         </div>
 
         <p className="login-footer">
