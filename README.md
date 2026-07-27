@@ -1,88 +1,144 @@
-# Ecommerce Project
+# E-Commerce Project
 
-Aplicação de e-commerce full stack, dividida em um cliente React e uma API Express/PostgreSQL.
+A full-stack e-commerce application built with React, Node.js/Express, and PostgreSQL. This project extends a previously built REST API with a complete, interactive client, covering authentication, product browsing, cart management, payment processing, and order history.
 
-## Estrutura do repositório
+**Live demo:** https://ecommerce-project-d4l8.onrender.com
 
-```
-ecommerce/
-├── ecommerce-client/   # Frontend em React + Vite
-└── ecommerce-api/      # Backend em Express + PostgreSQL
-```
+## Features
 
-## Tecnologias
+- **User authentication**
+  - Register/login with username and password (bcrypt password hashing)
+  - Google OAuth 2.0 login
+  - Session-based authentication (Passport.js + express-session)
+  - Logout
+- **Product catalog**
+  - Browse all products with images, descriptions, and pricing
+  - View detailed product pages
+- **Shopping cart**
+  - Add and remove items
+  - Cart persists per logged-in user
+- **Checkout**
+  - Real payment processing via Stripe (Payment Intents + Stripe Elements)
+  - Order confirmation and cart clearing on successful payment
+- **Order history**
+  - View past orders and their line items
+- **Protected routes**
+  - Cart, checkout, and order endpoints require authentication (both frontend and backend enforcement)
 
-**Frontend (`ecommerce-client`)**
+## Tech Stack
+
+**Frontend**
 - React 19 + Vite
-- React Router
+- React Router 7
 - Stripe (`@stripe/react-stripe-js`, `@stripe/stripe-js`)
-- lucide-react (ícones)
+- Context API for cart state management
 
-**Backend (`ecommerce-api`)**
-- Node.js + Express
+**Backend**
+- Node.js + Express 5
 - PostgreSQL (`pg`)
-- Passport (login local e Google OAuth 2.0)
-- Stripe (pagamentos)
-- Swagger UI (documentação da API via `openapi.yaml`)
+- Passport.js (local strategy + Google OAuth 2.0)
+- bcrypt for password hashing
+- express-session for session management
+- Stripe for payment processing
+- Swagger/OpenAPI documentation
 
-## Pré-requisitos
+**Infrastructure**
+- Deployed on Render (Web Service for the API, Static Site for the client, managed PostgreSQL)
 
-- Node.js 18+
-- PostgreSQL em execução com o banco de dados criado
+## Project Structure
 
-## Configuração
+ecommerce/
+├── ecommerce-api/ # Backend (Express + PostgreSQL)
+│ ├── app.js
+│ ├── db.js
+│ ├── passportConfig.js
+│ ├── openapi.yaml
+│ └── public/images/
+└── ecommerce-client/ # Frontend (React + Vite)
+└── src/
+├── pages/
+├── components/
+├── context/
+└── services/
 
-### API
+
+## Getting Started Locally
+
+### Prerequisites
+- Node.js
+- PostgreSQL
+- A Stripe account (test mode)
+- A Google Cloud project with OAuth 2.0 credentials
+
+### Backend setup
 
 ```bash
 cd ecommerce-api
 npm install
 ```
 
-Crie um arquivo `.env` em `ecommerce-api/` com as seguintes variáveis:
+Create a `.env` file with:
 
-```
-DB_USER=
-DB_HOST=
-DB_NAME=
-DB_PASSWORD=
-DB_PORT=
-SESSION_SECRET=
-GOOGLE_CLIENT_ID=
-GOOGLE_CLIENT_SECRET=
-STRIPE_SECRET_KEY=
-```
+DB_USER=your_db_user
+DB_PASSWORD=your_db_password
+DB_HOST=localhost
+DB_PORT=5432
+DB_NAME=your_db_name
+SESSION_SECRET=your_session_secret
+GOOGLE_CLIENT_ID=your_google_client_id
+GOOGLE_CLIENT_SECRET=your_google_client_secret
+STRIPE_SECRET_KEY=your_stripe_secret_key
 
-Inicie a API:
+
+Run the server:
 
 ```bash
 npm run dev
 ```
 
-A documentação interativa (Swagger) fica disponível em `/api-docs`.
+API docs available at `http://localhost:3000/api-docs`.
 
-### Cliente
+### Frontend setup
 
 ```bash
 cd ecommerce-client
 npm install
+```
+
+Create a `.env` file with:
+
+VITE_API_URL=http://localhost:3000
+VITE_STRIPE_PUBLISHABLE_KEY=your_stripe_publishable_key
+
+
+Run the dev server:
+
+```bash
 npm run dev
 ```
 
-## Funcionalidades da API
+## API Overview
 
-- Autenticação local e via Google OAuth
-- CRUD de produtos e usuários
-- Carrinho de compras (adicionar, remover itens, checkout)
-- Criação de pagamentos e checkout via Stripe
-- Consulta de pedidos e detalhes de pedidos
+| Resource | Endpoints |
+|---|---|
+| Auth | `POST /register`, `POST /login`, `GET /auth/google`, `GET /me`, `POST /logout` |
+| Products | `GET/POST /products`, `GET/PUT/DELETE /products/:id` |
+| Cart | `POST /cart`, `GET/POST /cart/:cartId`, `DELETE /cart/:cartId/items/:itemId`, `GET /cart/user/:userId` |
+| Checkout | `POST /create-payment-intent`, `POST /cart/:cartId/checkout` |
+| Orders | `GET /orders`, `GET /orders/:orderId` |
 
-## Scripts úteis
+Full API documentation available via Swagger at `/api-docs`.
 
-| Local              | Comando       | Descrição                       |
-|--------------------|---------------|----------------------------------|
-| `ecommerce-api`    | `npm run dev` | Sobe a API com nodemon           |
-| `ecommerce-api`    | `npm start`   | Sobe a API em modo produção      |
-| `ecommerce-client` | `npm run dev` | Sobe o frontend em modo dev      |
-| `ecommerce-client` | `npm run build` | Build de produção do frontend  |
-| `ecommerce-client` | `npm run lint`  | Roda o ESLint                   |
+## Testing Payments
+
+Use Stripe's test card numbers in test mode:
+
+Card number: 4242 4242 4242 4242
+Expiry: any future date
+CVC: any 3 digits
+
+
+## Author
+
+Henrique Andraus
+- GitHub: [@henriqueandraus](https://github.com/henriqueandraus)
