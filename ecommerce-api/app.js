@@ -29,7 +29,7 @@ function ensureAuthenticated(req, res, next) {
 const app = express()
 
 app.use(cors({
-  origin: 'http://localhost:5173',
+  origin: 'https://ecommerce-project-d4l8.onrender.com',
   credentials: true
 }));
 
@@ -108,7 +108,7 @@ app.get('/auth/google',
 app.get('/auth/google/callback',
   passport.authenticate('google', { failureRedirect: '/login' }),
   (req, res) => {
-    res.redirect('http://localhost:5173/');
+    res.redirect('https://ecommerce-project-d4l8.onrender.com/');
   }
 );
 

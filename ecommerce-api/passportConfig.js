@@ -33,7 +33,7 @@ passport.use(new Strategy((username, password, done) => {
 passport.use(new GoogleStrategy({
   clientID: process.env.GOOGLE_CLIENT_ID,
   clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-  callbackURL: 'http://localhost:3000/auth/google/callback'
+  callbackURL: 'https://ecommerce-api-uf9s.onrender.com/auth/google/callback'
 }, (accessToken, refreshToken, profile, done) => {
   pool.query('SELECT * FROM users WHERE google_id = $1', [profile.id], (error, results) => {
     if (error) {
