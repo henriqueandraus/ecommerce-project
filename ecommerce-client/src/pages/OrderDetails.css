@@ -1,0 +1,38 @@
+.order-details-page {
+  max-width: 700px;
+  margin: 0 auto;
+  padding: clamp(32px, 6vw, 56px) clamp(20px, 5vw, 56px);
+}
+
+.order-details-title {
+  margin-bottom: 32px;
+  text-align: center;
+}
+
+.order-details-list {
+  border: 1px solid var(--line);
+  border-radius: 2px;
+  background: var(--bg-raised);
+  padding: 4px clamp(20px, 4vw, 28px);
+}
+
+.order-details-item {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 14px 0;
+  border-bottom: 1px solid var(--line);
+  font-size: 15px;
+}
+
+.order-details-item:last-child {
+  border-bottom: none;
+}
+
+@media (max-width: 480px) {
+  .order-details-item {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 4px;
+  }
+}

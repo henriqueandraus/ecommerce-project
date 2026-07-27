@@ -1,0 +1,94 @@
+.orders-page {
+  padding: clamp(32px, 6vw, 56px) clamp(20px, 5vw, 56px);
+}
+
+.orders-title {
+  margin-bottom: 32px;
+  text-align: center;
+}
+
+.orders-list {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+.order-card {
+  border: 1px solid var(--line);
+  border-radius: 2px;
+  background: var(--bg-raised);
+  padding: clamp(20px, 4vw, 28px) clamp(20px, 4vw, 32px);
+  transition: border-color 0.15s ease;
+}
+
+.order-card:hover {
+  border-color: var(--ink);
+}
+
+.order-card-main {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+}
+
+.order-card-id {
+  font-family: var(--mono);
+  font-weight: 600;
+  font-size: 16px;
+  color: var(--ink);
+}
+
+.order-card-status {
+  display: inline-block;
+  font-family: var(--mono);
+  font-size: 12px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--ink-muted);
+  border: 1px solid var(--line);
+  border-radius: 2px;
+  padding: 4px 10px;
+}
+
+.order-card-foot {
+  margin-top: 14px;
+  padding-top: 14px;
+  border-top: 1px solid var(--line);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.order-card-total {
+  font-family: var(--mono);
+  font-weight: 600;
+  font-size: 15px;
+  color: var(--ink);
+}
+
+.order-card-link {
+  font-family: var(--mono);
+  font-size: 13px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  text-decoration: none;
+  color: var(--ink);
+  transition: color 0.15s ease;
+}
+
+.order-card-link:hover {
+  color: var(--ink-muted);
+}
+
+@media (max-width: 560px) {
+  .order-card-main,
+  .order-card-foot {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+}

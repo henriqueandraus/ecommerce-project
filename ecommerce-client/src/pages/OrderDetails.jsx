@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { getCurrentUser } from "../services/authService";
 import { getOrderDetails } from "../services/orderService";
+import "./OrderDetails.css";
 
 function OrderDetails() {
   const { id } = useParams();
@@ -29,16 +30,21 @@ function OrderDetails() {
     fetchOrder();
   }, [id, navigate]);
 
-  if (error) return <p style={{ color: "red" }}>{error}</p>;
+  if (error) return <p className="page-status">{error}</p>;
 
   return (
-    <div>
-      <h1>Order #{id}</h1>
-      {items.map((item) => (
-        <div key={item.id}>
-          {item.name} x {item.quantity} — ${item.price_at_purchase} each
-        </div>
-      ))}
+    <div className="order-details-page">
+      <h1 className="order-details-title">Order #{id}</h1>
+      <div className="order-details-list">
+        {items.map((item) => (
+          <div key={item.id} className="order-details-item">
+            <span>
+              {item.name} x {item.quantity}
+            </span>
+            <span>${item.price_at_purchase} each</span>
+          </div>
+        ))}
+      </div>
     </div>
   );
 }

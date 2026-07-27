@@ -1,10 +1,12 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import { X } from "lucide-react";
 import { useCart } from "../context/CartContext";
 import { getCartItems, removeFromCart } from "../services/cartService";
+import "./Cart.css";
 
 function Cart() {
-  const { cartId } = useCart();
+  const { cartId, refreshCartCount } = useCart();
   const [items, setItems] = useState([]);
   const [error, setError] = useState("");
   const navigate = useNavigate();
@@ -31,6 +33,7 @@ function Cart() {
     try {
       await removeFromCart(cartId, itemId);
       setItems(items.filter((item) => item.id !== itemId));
+      await refreshCartCount(cartId);
     } catch (err) {
       setError("Failed to remove item.");
     }
@@ -38,24 +41,40 @@ function Cart() {
 
   const total = items.reduce((sum, item) => sum + item.price * item.quantity, 0);
 
-  if (error) return <p style={{ color: "red" }}>{error}</p>;
+  if (error) return <p className="page-status">{error}</p>;
 
   return (
-    <div>
-      <h1>Your Cart</h1>
+    <div className="cart-page">
+      <h1 className="cart-title">Your Cart</h1>
       {items.length === 0 ? (
-        <p>Your cart is empty.</p>
+        <p className="page-status">Your cart is empty.</p>
       ) : (
         <>
-          {items.map((item) => (
-            <div key={item.id} style={{ display: "flex", justifyContent: "space-between", marginBottom: "0.5rem" }}>
-              <span>{item.name} x {item.quantity}</span>
-              <span>${(item.price * item.quantity).toFixed(2)}</span>
-              <button onClick={() => handleRemove(item.id)}>Remove</button>
-            </div>
-          ))}
-          <h3>Total: ${total.toFixed(2)}</h3>
-          <button onClick={() => navigate("/checkout")}>Proceed to Checkout</button>
+          <div className="cart-items">
+            {items.map((item) => (
+              <div key={item.id} className="cart-item">
+                <span>
+                  {item.name} x {item.quantity}
+                </span>
+                <span className="cart-item-price">${(item.price * item.quantity).toFixed(2)}</span>
+                <button
+                  type="button"
+                  className="cart-item-remove"
+                  aria-label={`Remove ${item.name}`}
+                  onClick={() => handleRemove(item.id)}
+                >
+                  <X size={16} strokeWidth={2} />
+                </button>
+              </div>
+            ))}
+          </div>
+          <div className="cart-total">
+            <span>Total</span>
+            <span className="cart-total-amount">${total.toFixed(2)}</span>
+          </div>
+          <button className="btn-block" onClick={() => navigate("/checkout")}>
+            Proceed to Checkout
+          </button>
         </>
       )}
     </div>

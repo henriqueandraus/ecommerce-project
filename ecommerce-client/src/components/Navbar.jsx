@@ -7,7 +7,7 @@ import "./Navbar.css";
 
 function Navbar() {
   const navigate = useNavigate();
-  const { user, refreshCart } = useCart();
+  const { user, itemCount, refreshCart } = useCart();
   const [menuOpen, setMenuOpen] = useState(false);
   const menuRef = useRef(null);
 
@@ -63,8 +63,9 @@ function Navbar() {
             <User size={20} strokeWidth={2} />
           </Link>
         )}
-        <Link to="/cart" className="nav-icon-btn" aria-label="Cart">
+        <Link to="/cart" className="nav-icon-btn nav-cart-btn" aria-label="Cart">
           <ShoppingCart size={20} strokeWidth={2} />
+          {itemCount > 0 && <span className="nav-cart-badge">{itemCount > 9 ? "9+" : itemCount}</span>}
         </Link>
       </div>
     </nav>

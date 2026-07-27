@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { getCurrentUser } from "../services/authService";
 import { getOrders } from "../services/orderService";
+import "./Orders.css";
 
 function Orders() {
   const [orders, setOrders] = useState([]);
@@ -28,22 +29,30 @@ function Orders() {
     fetchOrders();
   }, [navigate]);
 
-  if (error) return <p style={{ color: "red" }}>{error}</p>;
+  if (error) return <p className="page-status">{error}</p>;
 
   return (
-    <div>
-      <h1>Order History</h1>
+    <div className="orders-page">
+      <h1 className="orders-title">Order History</h1>
       {orders.length === 0 ? (
-        <p>You have no past orders.</p>
+        <p className="page-status">You have no past orders.</p>
       ) : (
-        orders.map((order) => (
-          <div key={order.id} style={{ border: "1px solid #ccc", padding: "1rem", marginBottom: "0.5rem" }}>
-            <p>Order #{order.id}</p>
-            <p>Status: {order.status}</p>
-            <p>Total: ${order.total_amount}</p>
-            <Link to={`/orders/${order.id}`}>View Details</Link>
-          </div>
-        ))
+        <div className="orders-list">
+          {orders.map((order) => (
+            <div key={order.id} className="order-card">
+              <div className="order-card-main">
+                <p className="order-card-id">Order #{order.id}</p>
+                <p className="order-card-status">{order.status}</p>
+              </div>
+              <div className="order-card-foot">
+                <p className="order-card-total">Total: ${order.total_amount}</p>
+                <Link to={`/orders/${order.id}`} className="order-card-link">
+                  View Details
+                </Link>
+              </div>
+            </div>
+          ))}
+        </div>
       )}
     </div>
   );

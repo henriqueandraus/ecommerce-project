@@ -7,6 +7,7 @@
   --ink-muted: #6b6b6b;
   --line: #e2e2e2;
   --shadow: rgba(48, 48, 48, 0.18);
+  --error: #b3261e;
 
   --display: "Anton", "Arial Narrow", sans-serif;
   --sans: "IBM Plex Sans", system-ui, sans-serif;
@@ -104,6 +105,59 @@ button {
 .btn:active {
   transform: translate(0, 0);
   box-shadow: none;
+}
+
+.btn-block {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  width: 100%;
+  padding: 16px 24px;
+  font-family: var(--mono);
+  font-size: 14px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  background: var(--ink);
+  color: var(--bg);
+  border: 1px solid var(--ink);
+  border-radius: 2px;
+  cursor: pointer;
+  transition:
+    transform 0.15s ease,
+    box-shadow 0.15s ease;
+}
+
+.btn-block:hover {
+  transform: translate(-2px, -2px);
+  box-shadow: 3px 3px 0 var(--ink);
+}
+
+.btn-block:active {
+  transform: translate(0, 0);
+  box-shadow: none;
+}
+
+.btn-block:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
+
+.page-status {
+  max-width: 640px;
+  margin: 0 auto;
+  padding: clamp(32px, 6vw, 56px) clamp(20px, 5vw, 56px);
+  text-align: center;
+}
+
+.form-error {
+  font-family: var(--mono);
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--error);
 }
 
 @media (prefers-reduced-motion: reduce) {

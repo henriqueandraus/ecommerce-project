@@ -8,7 +8,7 @@ import "./ProductDetails.css";
 
 function ProductDetails() {
   const { id } = useParams();
-  const { cartId } = useCart();
+  const { cartId, refreshCartCount } = useCart();
   const [product, setProduct] = useState(null);
   const [error, setError] = useState("");
   const navigate = useNavigate();
@@ -34,6 +34,7 @@ function ProductDetails() {
 
     try {
       await addToCart(cartId, product.id, 1);
+      await refreshCartCount(cartId);
     } catch (err) {
       setError("Failed to add item to cart.");
     }
